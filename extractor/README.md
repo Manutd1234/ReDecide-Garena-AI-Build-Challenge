@@ -1,6 +1,6 @@
 # Replay extractor
 
-Standalone ingestion and segmentation package for CS2 demo data. It is deliberately separate from `src/cs2_sim/core/model` so the analyzer can consume normalized replay data without owning parsing or storage.
+Standalone ingestion and segmentation package for CS2 demo data. It is deliberately separate from `model/src/cs2_sim/core/model` so the analyzer can consume normalized replay data without owning parsing or storage.
 
 ## Pipeline
 
@@ -25,13 +25,13 @@ The extractor keeps raw input immutable. The SQLite database is a queryable proj
 ## Install
 
 ```powershell
-python -m pip install -e replay-extractor
+python -m pip install -e extractor
 ```
 
 The core package has no runtime dependencies. Native `.dem` parsing uses the optional Awpy extra:
 
 ```powershell
-python -m pip install -e "replay-extractor[full]"
+python -m pip install -e "extractor[full]"
 ```
 
 ## Usage
@@ -41,7 +41,7 @@ Parse native demos into JSONL (Awpy required):
 ```powershell
 python -m replay_extractor.cli parse `
   --input data\full\demos `
-  --output replay-extractor\vault\parsed.jsonl `
+  --output extractor\vault\parsed.jsonl `
   --tick-interval 32
 ```
 
@@ -49,15 +49,15 @@ Materialize parsed JSONL into a segmented SQLite vault:
 
 ```powershell
 python -m replay_extractor.cli ingest `
-  --input replay-extractor\vault\parsed.jsonl `
-  --database replay-extractor\vault\replays.sqlite
+  --input extractor\vault\parsed.jsonl `
+  --database extractor\vault\replays.sqlite
 ```
 
 Inspect counts:
 
 ```powershell
 python -m replay_extractor.cli stats `
-  --database replay-extractor\vault\replays.sqlite
+  --database extractor\vault\replays.sqlite
 ```
 
 ## Data boundaries

@@ -7,6 +7,9 @@ from pathlib import Path
 from typing import Any, Iterator
 
 
+SCHEMA_VERSION = 2
+DEFAULT_TICK_RATE = 64.0
+
 EVENTS = [
     "round_freeze_end",
     "round_officially_ended",
@@ -23,7 +26,12 @@ PLAYER_PROPS = ["team_name", "X", "Y", "Z", "last_place_name", "health", "armor_
 WORLD_PROPS = ["game_time", "is_bomb_planted", "which_bomb_zone", "is_freeze_period"]
 
 
-def parse_demo(path: Path, *, tick_interval: int = 32) -> dict[str, Any]:
+def parse_demo(
+    path: Path,
+    *,
+    tick_interval: int = 32,
+    tick_rate: float | None = None,
+) -> dict[str, Any]:
     """Parse one native demo with Awpy; import it only when this path is used."""
 
     if tick_interval <= 0:
@@ -31,18 +39,28 @@ def parse_demo(path: Path, *, tick_interval: int = 32) -> dict[str, Any]:
     try:
         from awpy import Demo
     except ImportError as exc:
-        raise RuntimeError("install the optional parser with `pip install -e replay-extractor[full]`") from exc
+        raise RuntimeError("install the optional parser with `pip install -e extractor[full]`") from exc
     demo = Demo(path, verbose=False)
     demo.parse(events=EVENTS, player_props=PLAYER_PROPS, other_props=WORLD_PROPS)
+    header = dict(demo.header or {})
+    # Awpy does not consistently expose tick rate in its header.  Keep an
+    # explicit configured value in both places so every downstream consumer
+    # uses the same time base while preserving a parser-provided value.
+    effective_tick_rate = _positive_number(
+        header.get("tick_rate") if tick_rate is None else tick_rate,
+        DEFAULT_TICK_RATE,
+    )
+    header.setdefault("tick_rate", effective_tick_rate)
     ticks = demo.ticks
     if tick_interval > 1:
         ticks = ticks.filter((ticks["tick"] % tick_interval) == 0)
     return {
-        "schema_version": 1,
+        "schema_version": SCHEMA_VERSION,
         "parser": "awpy",
         "demo_file": path.name,
         "source_path": path.as_posix(),
-        "header": demo.header,
+        "tick_rate": effective_tick_rate,
+        "header": header,
         "rounds": _rows(demo.rounds),
         "kills": _rows(demo.kills),
         "damages": _rows(demo.damages),
@@ -71,6 +89,7 @@ def parse_directory(
     output_path: Path,
     *,
     tick_interval: int = 32,
+    tick_rate: float | None = None,
     sidecar_fallback: bool = True,
 ) -> tuple[int, int]:
     demos = sorted(input_dir.rglob("*.dem"))
@@ -82,7 +101,7 @@ def parse_directory(
         with partial.open("w", encoding="utf-8") as output:
             for path in demos:
                 try:
-                    record = parse_demo(path, tick_interval=tick_interval)
+                    record = parse_demo(path, tick_interval=tick_interval, tick_rate=tick_rate)
                 except Exception as exc:
                     sidecar = path.with_suffix(".analysis.json")
                     if not sidecar_fallback or not sidecar.exists():
@@ -91,6 +110,13 @@ def parse_directory(
                     record["parser"] = "analysis_sidecar"
                     record.setdefault("source_path", path.as_posix())
                     record["parse_warning"] = str(exc)
+                    # Sidecars may omit positional tick fields; retain the
+                    # legacy marker so the strict schema-v2 validator does
+                    # not mistake this fallback for a complete native parse.
+                    record.setdefault("schema_version", 1)
+                    record.setdefault("tick_rate", tick_rate or DEFAULT_TICK_RATE)
+                    record.setdefault("header", {})
+                    record["header"].setdefault("tick_rate", record["tick_rate"])
                     fallback_count += 1
                 output.write(json.dumps(record, separators=(",", ":")) + "\n")
                 count += 1
@@ -103,3 +129,11 @@ def parse_directory(
 
 def _rows(frame: Any) -> list[dict[str, Any]]:
     return [] if frame is None else frame.to_dicts()
+
+
+def _positive_number(value: Any, default: float) -> float:
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return default
+    return number if number > 0 else default

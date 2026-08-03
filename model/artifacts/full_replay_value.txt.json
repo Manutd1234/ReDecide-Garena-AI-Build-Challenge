@@ -48,5 +48,5 @@
   "training_rows": 2513,
   "boosting_rounds": 60,
   "weighting": "equal_total_weight_per_replay_round",
-  "calibrator": "models\\full_replay_calibrator.json"
+  "calibrator": "model/artifacts/full_replay_calibrator.json"
 }

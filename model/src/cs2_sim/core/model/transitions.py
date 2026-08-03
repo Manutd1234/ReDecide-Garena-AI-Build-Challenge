@@ -18,13 +18,28 @@ class ZoneTransitionModel:
         self._zones: set[str] = set()
 
     @staticmethod
-    def state_key(zone: str | None, side: str | None = None) -> str:
-        return f"{str(side or 'unknown').lower()}|{str(zone or 'unknown')}"
+    def state_key(zone: str | None, side: str | None = None, map_name: str | None = None) -> str:
+        """Return a map-aware transition key; nav IDs are map-local."""
 
-    def observe(self, previous_zone: str | None, next_zone: str | None, *, side: str | None = None) -> None:
+        return "|".join(
+            (
+                str(map_name or "unknown").lower(),
+                str(side or "unknown").lower(),
+                str(zone or "unknown"),
+            )
+        )
+
+    def observe(
+        self,
+        previous_zone: str | None,
+        next_zone: str | None,
+        *,
+        side: str | None = None,
+        map_name: str | None = None,
+    ) -> None:
         source = str(previous_zone or "unknown")
         destination = str(next_zone or "unknown")
-        key = self.state_key(source, side)
+        key = self.state_key(source, side, map_name)
         self._counts.setdefault(key, {})[destination] = self._counts.setdefault(key, {}).get(destination, 0) + 1
         self._zones.update((source, destination))
 
@@ -36,10 +51,16 @@ class ZoneTransitionModel:
     def zones(self) -> tuple[str, ...]:
         return tuple(sorted(self._zones))
 
-    def probabilities(self, previous_zone: str | None, *, side: str | None = None) -> dict[str, float]:
+    def probabilities(
+        self,
+        previous_zone: str | None,
+        *,
+        side: str | None = None,
+        map_name: str | None = None,
+    ) -> dict[str, float]:
         if not self._zones:
             return {}
-        key = self.state_key(previous_zone, side)
+        key = self.state_key(previous_zone, side, map_name)
         counts = self._counts.get(key, {})
         denominator = sum(counts.values()) + self.alpha * len(self._zones)
         return {
@@ -47,20 +68,33 @@ class ZoneTransitionModel:
             for zone in sorted(self._zones)
         }
 
-    def predict_next(self, previous_zone: str | None, *, side: str | None = None) -> str:
-        probabilities = self.probabilities(previous_zone, side=side)
+    def predict_next(
+        self,
+        previous_zone: str | None,
+        *,
+        side: str | None = None,
+        map_name: str | None = None,
+    ) -> str:
+        probabilities = self.probabilities(previous_zone, side=side, map_name=map_name)
         if not probabilities:
             return str(previous_zone or "unknown")
         return max(probabilities, key=lambda zone: (probabilities[zone], zone))
 
-    def fit_sequences(self, sequences: Iterable[Iterable[tuple[str | None, str | None, str | None]]]) -> "ZoneTransitionModel":
+    def fit_sequences(self, sequences: Iterable[Iterable[tuple[str | None, ...]]]) -> "ZoneTransitionModel":
         for sequence in sequences:
-            for previous_zone, next_zone, side in sequence:
-                self.observe(previous_zone, next_zone, side=side)
+            for item in sequence:
+                if len(item) == 3:
+                    previous_zone, next_zone, side = item
+                    map_name = None
+                elif len(item) == 4:
+                    previous_zone, next_zone, side, map_name = item
+                else:
+                    raise ValueError("transition sequence items must contain 3 or 4 values")
+                self.observe(previous_zone, next_zone, side=side, map_name=map_name)
         return self
 
     def to_dict(self) -> dict[str, object]:
-        return {"version": 1, "alpha": self.alpha, "counts": self._counts, "zones": sorted(self._zones)}
+        return {"version": 2, "alpha": self.alpha, "counts": self._counts, "zones": sorted(self._zones)}
 
     @classmethod
     def from_dict(cls, payload: dict[str, object]) -> "ZoneTransitionModel":

@@ -1,5 +1,6 @@
 {
-  "version": 1,
+  "version": 2,
+  "feature_schema_version": 2,
   "feature_names": [
     "map_code",
     "time_seconds",
@@ -41,8 +42,14 @@
     "bomb_site_is_a",
     "bomb_site_is_b"
   ],
-  "booster_weight": 0.8,
-  "booster": "models\\full_replay_value.txt",
-  "bayesian": "models\\small_snapshot_value.json",
-  "calibrator": "models\\full_replay_calibrator.json"
+  "small_model_blend": 0.2,
+  "training_mode": "sqlite",
+  "event_only_rows": 0,
+  "decision_window_seconds": 5.0,
+  "tick_rate": 64.0,
+  "training_rows": 894,
+  "test_rows": 274,
+  "boosting_rounds": 49,
+  "weighting": "equal_total_weight_per_replay_round",
+  "calibrator": "model\\artifacts\\releases\\v2\\full_replay_calibrator.json"
 }

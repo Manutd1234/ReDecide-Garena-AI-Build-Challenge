@@ -109,7 +109,7 @@ dependencies automatically.
 Use a WSL interpreter such as:
 
 ```text
-/home/numnum/.virtualenvs/GHackathon1/bin/python
+/home/<user>/.virtualenvs/ReDecide/bin/python
 ```
 
 Then open a WSL terminal and run the JavaScript installation script there.

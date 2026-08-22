@@ -113,7 +113,7 @@ dependencies automatically.
 Use a WSL interpreter such as:
 
 ```text
-/home/numnum/.virtualenvs/GHackathon1/bin/python
+/home/<user>/.virtualenvs/ReDecide/bin/python
 ```
 
 Keep the WSL interpreter for Python, but run the frontend's Node and pnpm
@@ -122,7 +122,7 @@ commands from Windows PowerShell. Do not share the Windows checkout's
 native binaries and pnpm metadata.
 
 If Linux JavaScript execution is required, create a separate clone under a
-native path such as `~/src/GHackathon`, then run `bash scripts/install-js-deps.sh`
+native path such as `~/src/ReDecide-Garena-AI-Build-Challenge`, then run `bash scripts/install-js-deps.sh`
 inside that clone. The Bash helper refuses Windows-mounted `/mnt/<drive>` paths.
 
 ## Common problems
@@ -153,8 +153,8 @@ generated directory aside and reinstall from PowerShell. Keep backups outside
 `frontend/` so Tailwind never scans diagnostic artifacts:
 
 ```powershell
-cd C:\Users\n8469\PycharmProjects\GHackathon
-Move-Item frontend\node_modules "$env:TEMP\GHackathon-frontend-node_modules-backup"
+cd "$HOME\src\ReDecide-Garena-AI-Build-Challenge"
+Move-Item frontend\node_modules "$env:TEMP\ReDecide-frontend-node_modules-backup"
 .\scripts\install-js-deps.ps1
 ```
 

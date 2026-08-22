@@ -1,7 +1,6 @@
 GitHub Repository Link:
-https://github.com/Asdao/ReDecide
+https://github.com/Manutd1234/ReDecide-Garena-AI-Build-Challenge
 
 Note:
-- Repository is set to private.
-- Added 'garena-ai-build-challenge' as a collaborator.
-- The latest production code on 'main' branch corresponds to Team_Pandamonium_Redecide-main.zip.
+- Repository is public and owned by 'Manutd1234'.
+- The 'main' branch contains the current production code and submission documentation.

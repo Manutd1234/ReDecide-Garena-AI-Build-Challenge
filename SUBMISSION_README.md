@@ -6,12 +6,24 @@ Welcome to the **Team Pandamonium** submission for the **Garena AI Build Challen
 
 ---
 
+## 👤 Participant
+
+| Field | Details |
+|---|---|
+| **Name** | Ian Abiel Wangsa |
+| **Phone** | 91234567 |
+| **Email** | [e1525902@u.nus.edu](mailto:e1525902@u.nus.edu) |
+| **Affiliation** | National University of Singapore |
+| **Roles** | Student; Developer |
+
+---
+
 ## 🔗 Quick Access Links
 
 | Resource | Link / Details |
 |---|---|
 | 🌐 **Live Deployed Web App** | [https://g-hackathon.vercel.app](https://g-hackathon.vercel.app) |
-| 💻 **GitHub Repository** | [https://github.com/Asdao/ReDecide](https://github.com/Asdao/ReDecide)<br>*(Private repository — `garena-ai-build-challenge` invited as collaborator)* |
+| 💻 **GitHub Repository** | [https://github.com/Manutd1234/ReDecide-Garena-AI-Build-Challenge](https://github.com/Manutd1234/ReDecide-Garena-AI-Build-Challenge)<br>*(Public repository owned by `Manutd1234`)* |
 | 📁 **Google Drive Submission** | [Google Drive Folder Link](https://drive.google.com/drive/folders/1Eima82TLMptejoeU0MlVPEEJhM6KafMg?usp=sharing) |
 | 📹 **Demo Video** | `Team_Pandamonium_Redecide-demo-voiced-subtitled.mp4` *(4 min 35 sec)* |
 | 📄 **Slide Deck Proposal** | `Team Pandamonium_Redecide_Slide_Deck.pdf` *(10 slides)* |
@@ -24,7 +36,7 @@ This repository is structured as a full-stack monorepo containing our CS2 replay
 
 ```text
 .
-├── frontend/             # Next.js 14, React, TypeScript, Tailwind CSS
+├── frontend/             # Next.js 16, React 19, TypeScript, Tailwind CSS 4
 │   ├── src/app/          # Application routes, pages, and Vercel Blob / API proxy routes
 │   ├── src/components/   # Interactive radar, replay timeline, moment cards, intent composer UI
 │   └── public/replays/   # Pre-processed sample replay datasets
@@ -57,17 +69,17 @@ This repository is structured as a full-stack monorepo containing our CS2 replay
 ## 🛠️ Local Setup & Quick Start Guide
 
 ### Prerequisites
-- **Python 3.10+** (with `uv` or `pip`)
-- **Node.js 18+** (with `npm` or `pnpm`)
+- **Python 3.12+** with `uv`
+- **Node.js 24** with `pnpm` 11
 
 ---
 
 ### Step 1: Clone Repository & Configure Environment
 
 ```bash
-# Clone private repository (or unzip Team_Pandamonium_Redecide-main.zip)
-git clone git@github.com:Asdao/GHackathon.git
-cd GHackathon
+# Clone the public submission repository
+git clone https://github.com/Manutd1234/ReDecide-Garena-AI-Build-Challenge.git
+cd ReDecide-Garena-AI-Build-Challenge
 
 # Copy root environment configuration
 cp .env.example .env
@@ -79,7 +91,7 @@ NEXT_PUBLIC_REPLAY_UPLOAD_MODE=direct
 EOF
 ```
 
-*(Optional: Add your `DEEPSEEK_API_KEY` or `GEMINI_API_KEY` to `.env` if testing live LLM coaching generation).*
+*(Optional: Add your `DEEPSEEK_API_KEY` or `HARNESS_MODEL_API_KEY` to `.env` if testing live LLM coaching generation.)*
 
 ---
 

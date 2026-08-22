@@ -4,8 +4,8 @@ The replay engine already provides bounded, checksum-aware downloaders. Use
 the wrapper below from WSL after activating the project Python environment:
 
 ```bash
-cd /mnt/c/Users/n8469/PycharmProjects/GHackathon
-source /home/<user>/.virtualenvs/GHackathon1/bin/activate
+cd /mnt/c/Users/<user>/src/ReDecide-Garena-AI-Build-Challenge
+source /home/<user>/.virtualenvs/ReDecide/bin/activate
 bash scripts/download-replay-assets.sh --help
 ```
 

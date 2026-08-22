@@ -46,7 +46,7 @@ This repository is structured as a full-stack monorepo containing our CS2 replay
 │   ├── app/coach/        # Intent coaching engine & bounded evidence LLM prompt generators
 │   └── app/replay/       # Telemetry parser, spatial calculations, and win-probability modeling
 │
-├── data/                 # Sample CS2 telemetry replays (.dem & parquet metadata)
+├── data/                 # Public metadata, processed analyses, and runtime placeholders
 ├── docs/                 # Product documentation, API schemas, and architecture plans
 ├── scripts/              # Automated environment setup, dev launchers, and test runners
 ├── vercel.json           # Vercel monorepo deployment & serverless routing config
@@ -60,7 +60,7 @@ This repository is structured as a full-stack monorepo containing our CS2 replay
 2. **Win Probability & Statistical Model**:
    Uses `Awpy` & `LightGBM` models to compute real-time win-chance fluctuations before and after critical decision points.
 3. **AI Intent Coaching Engine (`backend/app/coach`)**:
-   Combines factual telemetry evidence with LLMs (e.g. DeepSeek / Gemini) to explain player decision moments, map intent statements to tactical goals, and provide actionable advice without hallucinating replay facts.
+   Combines factual telemetry evidence with an OpenAI-compatible provider such as DeepSeek to explain player decision moments, map intent statements to tactical goals, and provide actionable advice without hallucinating replay facts.
 4. **Interactive Dashboard (`frontend/`)**:
    Provides dynamic 2D radar playback, interactive timelines, win-probability graphs, and an intent follow-up interface.
 
@@ -97,21 +97,20 @@ EOF
 
 ### Step 2: Start Development Servers
 
-#### Option A: Automatic Launcher (PowerShell / macOS)
+#### Option A: macOS / Linux (manual)
 
-* **macOS / Linux**:
-  ```bash
-  # Start Backend API
-  uvicorn backend.main:app --reload --port 8000 &
-  
-  # Start Frontend UI
-  cd frontend && npm run dev
-  ```
+```bash
+uv sync
+bash scripts/install-js-deps.sh
+uv run uvicorn backend.main:app --reload --port 8000 &
+cd frontend && pnpm dev
+```
 
-* **Windows (PowerShell)**:
-  ```powershell
-  .\scripts\start-dev.ps1
-  ```
+#### Option B: Windows (automatic PowerShell launcher)
+
+```powershell
+.\scripts\start-dev.ps1
+```
 
 ---
 
@@ -125,11 +124,11 @@ Once started, open your browser to:
 
 ## 🛡️ Security & Disclosures
 
-- **Security Compliance**: No passwords, private credentials, or live production API keys are included in this source code or repository history.
+- **Security Practice**: Keep live provider keys only in the ignored root `.env`; never commit real credentials.
 - **Third-Party Disclosures**:
-  - **Frontend**: Next.js, React, TypeScript, Tailwind CSS, Zod, Lucide Icons.
+  - **Frontend**: Next.js, React, TypeScript, Tailwind CSS, Zod.
   - **Backend**: FastAPI, Pydantic, Uvicorn, Awpy, LightGBM, Pandas, NumPy.
-  - **AI Integration**: OpenAI / DeepSeek / Gemini API adapters for bounded intent explanation.
+  - **AI Integration**: OpenAI-compatible HTTP adapter configured for DeepSeek, plus the optional Pi/Node harness.
 
 ---
 

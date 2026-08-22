@@ -28,7 +28,7 @@ reproduce aiming, physics, or exact player movement.
 ## Current structure
 
 ```text
-GHackathon/
+ReDecide/
 |-- main.py                         # Creates dependencies and runs an example
 |-- pyproject.toml
 |-- docs/

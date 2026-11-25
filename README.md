@@ -7,7 +7,7 @@ telemetry, lets the user choose a player, identifies post-contact decision
 moments, and presents win-chance signals and coaching in an interactive radar
 and timeline.
 
-## How it works?
+## How does it work?
 
 ```text
 .dem or sample -> parse replay -> choose player -> select safe decision moments
